@@ -77,7 +77,7 @@ reminder-agent/
    Alternatively, create a `.env` file in the project root (git-ignored by default).
 
 ## Usage
-
+<img width="1727" height="1106" alt="image" src="https://github.com/user-attachments/assets/44ae1915-9a24-4ca5-b77f-af2e2a7f787d" />
 ### Desktop App (Recommended)
 
 Launch the app as a native macOS window:
@@ -98,7 +98,6 @@ python app.py
 
 Then open `http://127.0.0.1:5050` in your browser.
 
-<img width="1727" height="1106" alt="image" src="https://github.com/user-attachments/assets/44ae1915-9a24-4ca5-b77f-af2e2a7f787d" />
 
 
 ## How It Works
