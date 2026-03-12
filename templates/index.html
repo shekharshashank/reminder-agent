@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reminder Agent</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #1e293b;
+      padding: 14px 24px;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    header .logo {
+      width: 32px; height: 32px;
+      background: #6366f1;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+
+    header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ---- Chat Pane ---- */
+    .chat-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #334155;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .msg {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .msg.user {
+      align-self: flex-end;
+      background: #6366f1;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg.bot {
+      align-self: flex-start;
+      background: #1e293b;
+      color: #cbd5e1;
+      border-bottom-left-radius: 4px;
+      border: 1px solid #334155;
+    }
+
+    .chat-input-area {
+      padding: 16px 20px;
+      border-top: 1px solid #334155;
+      background: #1e293b;
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #f1f5f9;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .chat-input-area input:focus {
+      border-color: #6366f1;
+    }
+
+    .chat-input-area button {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      background: #6366f1;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .chat-input-area button:hover { background: #4f46e5; }
+
+    /* ---- Reminders Pane ---- */
+    .reminders-pane {
+      width: 380px;
+      display: flex;
+      flex-direction: column;
+      background: #1e293b;
+    }
+
+    .reminders-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #334155;
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .reminders-header .count {
+      background: #6366f1;
+      color: #fff;
+      border-radius: 10px;
+      padding: 1px 8px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .reminders-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .reminder-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 12px 14px;
+      transition: all 0.3s ease;
+    }
+
+    .reminder-card.due {
+      border-color: #f59e0b;
+      background: #1c1207;
+      animation: pulse-glow 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 5px rgba(245, 158, 11, 0.3); }
+      50%      { box-shadow: 0 0 20px rgba(245, 158, 11, 0.6); }
+    }
+
+    .reminder-card .agenda {
+      font-size: 14px;
+      font-weight: 500;
+      color: #f1f5f9;
+      margin-bottom: 6px;
+    }
+
+    .reminder-card .datetime {
+      font-size: 12px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .reminder-card .actions {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .reminder-card .actions button {
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid #475569;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reminder-card .actions button:hover {
+      background: #334155;
+      color: #f1f5f9;
+    }
+
+    .reminder-card .actions button.dismiss-btn:hover {
+      background: #f59e0b;
+      border-color: #f59e0b;
+      color: #000;
+    }
+
+    .reminder-card .actions button.delete-btn:hover {
+      background: #ef4444;
+      border-color: #ef4444;
+      color: #fff;
+    }
+
+    .reminder-card.dismissed {
+      opacity: 0.45;
+      border-color: #334155;
+      background: #0f172a;
+      animation: none;
+      box-shadow: none;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #64748b;
+      margin-top: 60px;
+      font-size: 14px;
+    }
+
+    .empty-state .icon { font-size: 36px; margin-bottom: 10px; }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">&#x23F0;</div>
+  <h1>Reminder Agent</h1>
+</header>
+
+<div class="container">
+  <!-- Chat Pane -->
+  <div class="chat-pane">
+    <div class="chat-messages" id="chatMessages">
+      <div class="msg bot">Hi! Tell me what you'd like to be reminded about.
+
+Examples:
+  "Remind me to call the dentist at 3pm tomorrow"
+  "Team standup on Monday at 9:30am"
+  "Pick up groceries at 6pm today"</div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" placeholder="Type a reminder..." autocomplete="off" />
+      <button id="sendBtn" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <!-- Reminders Pane -->
+  <div class="reminders-pane">
+    <div class="reminders-header">
+      Reminders <span class="count" id="reminderCount">0</span>
+    </div>
+    <div class="reminders-list" id="remindersList">
+      <div class="empty-state" id="emptyState">
+        <div class="icon">&#x1F4CB;</div>
+        No reminders yet.<br>Start chatting to create some!
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInput = document.getElementById('chatInput');
+  const remindersList = document.getElementById('remindersList');
+  const reminderCount = document.getElementById('reminderCount');
+  const emptyState = document.getElementById('emptyState');
+
+  // Unique session ID per tab so pending state is isolated
+  const sessionId = crypto.randomUUID();
+
+  // Track which reminders already triggered an alert so we don't repeat
+  const alertedIds = new Set();
+
+  // ---- Audio context for alert beeps ----
+  let audioCtx = null;
+
+  function ensureAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  function playAlertSound() {
+    ensureAudioCtx();
+    // Play a 3-beep alert
+    [0, 200, 400].forEach(delay => {
+      setTimeout(() => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = 880;
+        gain.gain.value = 0.3;
+        osc.start(audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+        osc.stop(audioCtx.currentTime + 0.15);
+      }, delay);
+    });
+  }
+
+  // ---- Chat ----
+  function addMessage(text, sender) {
+    const div = document.createElement('div');
+    div.className = `msg ${sender}`;
+    div.textContent = text;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    addMessage(text, 'user');
+    chatInput.value = '';
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, session_id: sessionId })
+      });
+      const data = await res.json();
+      addMessage(data.reply, 'bot');
+      if (data.reminders && data.reminders.length > 0) {
+        loadReminders();
+      }
+    } catch (err) {
+      addMessage('Something went wrong. Please try again.', 'bot');
+    }
+  }
+
+  chatInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+  // ---- Reminders list ----
+  function isDue(r) {
+    const now = new Date();
+    const reminderDt = new Date(`${r.date}T${r.time}`);
+    return now >= reminderDt && !r.dismissed;
+  }
+
+  function renderReminders(reminders) {
+    // Sort: due (non-dismissed) first, then upcoming by datetime, dismissed last
+    reminders.sort((a, b) => {
+      if (a.dismissed !== b.dismissed) return a.dismissed ? 1 : -1;
+      const aDue = isDue(a), bDue = isDue(b);
+      if (aDue !== bDue) return aDue ? -1 : 1;
+      return new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`);
+    });
+
+    reminderCount.textContent = reminders.filter(r => !r.dismissed).length;
+
+    if (reminders.length === 0) {
+      emptyState.style.display = 'block';
+      remindersList.querySelectorAll('.reminder-card').forEach(c => c.remove());
+      return;
+    }
+
+    emptyState.style.display = 'none';
+
+    // Rebuild list
+    remindersList.querySelectorAll('.reminder-card').forEach(c => c.remove());
+
+    reminders.forEach(r => {
+      const due = isDue(r);
+
+      // Trigger alert for newly due reminders
+      if (due && !alertedIds.has(r.id)) {
+        alertedIds.add(r.id);
+        playAlertSound();
+        // Send native macOS notification
+        fetch('/api/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: 'Reminder', message: r.agenda })
+        }).catch(() => {});
+      }
+
+      const card = document.createElement('div');
+      card.className = 'reminder-card' + (due ? ' due' : '') + (r.dismissed ? ' dismissed' : '');
+
+      const dt = new Date(`${r.date}T${r.time}`);
+      const dateStr = dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      const timeStr = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+      card.innerHTML = `
+        <div class="agenda">${due && !r.dismissed ? '&#x1F514; ' : ''}${escapeHtml(r.agenda)}</div>
+        <div class="datetime">
+          &#x1F4C5; ${dateStr} &nbsp; &#x23F0; ${timeStr}
+          ${r.dismissed ? ' &nbsp; <em>(dismissed)</em>' : ''}
+        </div>
+        <div class="actions">
+          ${due && !r.dismissed ? `<button class="dismiss-btn" onclick="dismissReminder('${r.id}')">Dismiss</button>` : ''}
+          <button class="delete-btn" onclick="deleteReminder('${r.id}')">Delete</button>
+        </div>
+      `;
+      remindersList.appendChild(card);
+    });
+  }
+
+  function escapeHtml(text) {
+    const d = document.createElement('div');
+    d.textContent = text;
+    return d.innerHTML;
+  }
+
+  async function loadReminders() {
+    try {
+      const res = await fetch('/api/reminders');
+      const data = await res.json();
+      renderReminders(data);
+    } catch (err) {
+      console.error('Failed to load reminders', err);
+    }
+  }
+
+  async function deleteReminder(id) {
+    await fetch(`/api/reminders/${id}`, { method: 'DELETE' });
+    loadReminders();
+  }
+
+  async function dismissReminder(id) {
+    await fetch(`/api/reminders/${id}/dismiss`, { method: 'POST' });
+    loadReminders();
+  }
+
+  // Poll every 10 seconds to check for due reminders
+  loadReminders();
+  setInterval(loadReminders, 10000);
+
+  // Focus input on load
+  chatInput.focus();
+</script>
+
+</body>
+</html>

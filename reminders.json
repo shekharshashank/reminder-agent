@@ -1,0 +1,74 @@
+[
+  {
+    "id": "df244ba1",
+    "agenda": "Movie",
+    "date": "2026-02-24",
+    "time": "10:00",
+    "created_at": "2026-02-23T22:43:43.954152",
+    "dismissed": false
+  },
+  {
+    "id": "58636e47",
+    "agenda": "Walk",
+    "date": "2026-02-25",
+    "time": "05:00",
+    "created_at": "2026-02-24T07:12:00.736761",
+    "dismissed": false
+  },
+  {
+    "id": "12661e79",
+    "agenda": "Call John",
+    "date": "2026-02-25",
+    "time": "17:00",
+    "created_at": "2026-02-24T07:17:50.024666",
+    "dismissed": false
+  },
+  {
+    "id": "65a64514",
+    "agenda": "Lunch",
+    "date": "2026-02-24",
+    "time": "12:00",
+    "created_at": "2026-02-24T10:49:44.417257",
+    "dismissed": false
+  },
+  {
+    "id": "e16dc036",
+    "agenda": "Go for walk",
+    "date": "2026-02-25",
+    "time": "18:00",
+    "created_at": "2026-02-24T10:53:56.254457",
+    "dismissed": false
+  },
+  {
+    "id": "23fe3e3b",
+    "agenda": "Standup",
+    "date": "2026-02-24",
+    "time": "15:06",
+    "created_at": "2026-02-24T15:01:05.985985",
+    "dismissed": false
+  },
+  {
+    "id": "f36d4059",
+    "agenda": "Walk",
+    "date": "2026-02-24",
+    "time": "18:00",
+    "created_at": "2026-02-24T15:15:08.978930",
+    "dismissed": false
+  },
+  {
+    "id": "3fdc47d5",
+    "agenda": "Doctor meet",
+    "date": "2026-02-25",
+    "time": "22:00",
+    "created_at": "2026-02-24T15:15:54.916786",
+    "dismissed": false
+  },
+  {
+    "id": "2cb7cec5",
+    "agenda": "Standup end",
+    "date": "2026-02-24",
+    "time": "15:17",
+    "created_at": "2026-02-24T15:16:31.307128",
+    "dismissed": false
+  }
+]
