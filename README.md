@@ -98,6 +98,9 @@ python app.py
 
 Then open `http://127.0.0.1:5050` in your browser.
 
+<img width="1727" height="1106" alt="image" src="https://github.com/user-attachments/assets/44ae1915-9a24-4ca5-b77f-af2e2a7f787d" />
+
+
 ## How It Works
 
 1. You type a message in the chat pane (e.g., _"Remind me to buy groceries at 6pm"_)
